@@ -39,13 +39,13 @@ pipeline {
                 script {
                     if (env.BRANCH_NAME == "master") {
                         sh """
-                            docker build -t vijay3639/masterimage . 
-                            docker tag vijay3639/masterimage:latest vijay3639/masterimage:${BUILD_NUMBER}
+                            docker build -t mughilan23/masterimage . 
+                            docker tag mughilan23/masterimage:latest mughilan23/masterimage:${BUILD_NUMBER}
                         """
                     } else if (env.BRANCH_NAME == "developer") {
                         sh """
-                            docker build -t vijay3639/devimage . 
-                            docker tag vijay3639/devimage:latest vijay3639/devimage:${BUILD_NUMBER}
+                            docker build -t mughilan23/devimage . 
+                            docker tag mughilan23/devimage:latest mughilan23/devimage:${BUILD_NUMBER}
                         """
                     }
                 }
@@ -56,9 +56,9 @@ pipeline {
             steps {
                 script {
                     if (env.BRANCH_NAME == "master") {
-                        sh "trivy image --exit-code 0 --severity HIGH,CRITICAL vijay3639/masterimage:latest"
+                        sh "trivy image --exit-code 0 --severity HIGH,CRITICAL mughilan23/masterimage:latest"
                     } else if (env.BRANCH_NAME == "developer") {
-                        sh "trivy image --exit-code 0 --severity HIGH,CRITICAL vijay3639/devimage:latest"
+                        sh "trivy image --exit-code 0 --severity HIGH,CRITICAL mughilan23/devimage:latest"
                     }
                 }
             }
@@ -72,13 +72,13 @@ pipeline {
                     script {
                         if (env.BRANCH_NAME == "master") {
                             sh """
-                                docker push vijay3639/masterimage:latest
-                                docker push vijay3639/masterimage:${BUILD_NUMBER}
+                                docker push mughilan23/masterimage:latest
+                                docker push mughilan23/masterimage:${BUILD_NUMBER}
                             """
                         } else if (env.BRANCH_NAME == "developer") {
                             sh """
-                                docker push vijay3639/devimage:latest
-                                docker push vijay3639/devimage:${BUILD_NUMBER}
+                                docker push mughilan23/devimage:latest
+                                docker push mughilan23/devimage:${BUILD_NUMBER}
                             """
                         }
                     }
@@ -91,10 +91,10 @@ pipeline {
                 script {
                     if (env.BRANCH_NAME == "master") {
                         sh "docker rm -f masterapp || true"
-                        sh "docker run -itd --name masterapp -p 8010:80 vijay3639/masterimage:latest"
+                        sh "docker run -itd --name masterapp -p 8010:80 mughilan23/masterimage:latest"
                     } else if (env.BRANCH_NAME == "developer") {
                         sh "docker rm -f devapp || true"
-                        sh "docker run -itd --name devapp -p 8020:80 vijay3639/devimage:latest"
+                        sh "docker run -itd --name devapp -p 8020:80 mughilan23/devimage:latest"
                     }
                 }
             }
@@ -105,14 +105,14 @@ pipeline {
                 script {
                     if (env.BRANCH_NAME == "master") {
                         sh """
-                            docker images "vijay3639/masterimage" --format "{{.Repository}}:{{.Tag}}" \
+                            docker images "mughilan23/masterimage" --format "{{.Repository}}:{{.Tag}}" \
                             | grep -v "latest" \
                             | grep -v "${BUILD_NUMBER}" \
                             | xargs -r docker rmi -f
                         """
                     } else if (env.BRANCH_NAME == "developer") {
                         sh """
-                            docker images "vijay3639/devimage" --format "{{.Repository}}:{{.Tag}}" \
+                            docker images "mughilan23/devimage" --format "{{.Repository}}:{{.Tag}}" \
                             | grep -v "latest" \
                             | grep -v "${BUILD_NUMBER}" \
                             | xargs -r docker rmi -f
