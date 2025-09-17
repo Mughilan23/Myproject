@@ -42,7 +42,7 @@ pipeline {
                             docker build -t mughilan23/masterimage . 
                             docker tag mughilan23/masterimage:latest mughilan23/masterimage:${BUILD_NUMBER}
                         """
-                    } else if (env.BRANCH_NAME == "developer") {
+                    } else if (env.BRANCH_NAME == "dev") {
                         sh """
                             docker build -t mughilan23/devimage . 
                             docker tag mughilan23/devimage:latest mughilan23/devimage:${BUILD_NUMBER}
@@ -57,7 +57,7 @@ pipeline {
                 script {
                     if (env.BRANCH_NAME == "master") {
                         sh "trivy image --exit-code 0 --severity HIGH,CRITICAL mughilan23/masterimage:latest"
-                    } else if (env.BRANCH_NAME == "developer") {
+                    } else if (env.BRANCH_NAME == "dev") {
                         sh "trivy image --exit-code 0 --severity HIGH,CRITICAL mughilan23/devimage:latest"
                     }
                 }
@@ -75,7 +75,7 @@ pipeline {
                                 docker push mughilan23/masterimage:latest
                                 docker push mughilan23/masterimage:${BUILD_NUMBER}
                             """
-                        } else if (env.BRANCH_NAME == "developer") {
+                        } else if (env.BRANCH_NAME == "dev") {
                             sh """
                                 docker push mughilan23/devimage:latest
                                 docker push mughilan23/devimage:${BUILD_NUMBER}
@@ -92,7 +92,7 @@ pipeline {
                     if (env.BRANCH_NAME == "master") {
                         sh "docker rm -f masterapp || true"
                         sh "docker run -itd --name masterapp -p 8010:80 mughilan23/masterimage:latest"
-                    } else if (env.BRANCH_NAME == "developer") {
+                    } else if (env.BRANCH_NAME == "dev") {
                         sh "docker rm -f devapp || true"
                         sh "docker run -itd --name devapp -p 8020:80 mughilan23/devimage:latest"
                     }
@@ -110,7 +110,7 @@ pipeline {
                             | grep -v "${BUILD_NUMBER}" \
                             | xargs -r docker rmi -f
                         """
-                    } else if (env.BRANCH_NAME == "developer") {
+                    } else if (env.BRANCH_NAME == "dev") {
                         sh """
                             docker images "mughilan23/devimage" --format "{{.Repository}}:{{.Tag}}" \
                             | grep -v "latest" \
