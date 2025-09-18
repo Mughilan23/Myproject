@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        SCANNER_HOME = tool 'sonarqube-scanner'
+        SCANNER_HOME = tool 'sonar-scanner'
     }
     stages {
         stage('Checkout Code') {
